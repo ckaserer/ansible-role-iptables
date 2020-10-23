@@ -12,8 +12,8 @@
       path: "{{ sysctl_conf_location }}"
       regexp: '#net.ipv4.ip_forward=1'
       line: 'net.ipv4.ip_forward=1'
-    register: result
-    failed_when: result.changed
+    register: perm_result
+    failed_when: perm_result.changed
 
   - name: Save iptables file location to variable
     stat:
@@ -26,5 +26,5 @@
       src: './molecule/files/rules.v4.compare'
       dest: "{{ iptables_persistent_location }}"
     check_mode: yes
-    register: result
-    failed_when: result.changed
+    register: content_result
+    failed_when: content_result.changed
