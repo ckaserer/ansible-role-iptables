@@ -7,14 +7,19 @@
     iptables_persistent_location: '/etc/iptables/rules.v4'
 
   tasks:
+  - name: check ipv4 forwarding is enabled permanently
+    lineinfile:
+      path: "{{ sysctl_conf_location }}"
+      regexp: '#net.ipv4.ip_forward=1'
+      line: 'net.ipv4.ip_forward=1'
+    register: result
+    failed_when: result.changed
+
   - name: Save iptables file location to variable
     stat:
       path: "{{ iptables_persistent_location }}"
     register: stat_result
-
-  - name: Check if iptables file exists
-    assert:
-      that: stat_result.stat.exists
+    failed_when: not stat_result.stat.exists
 
   - name: check content of iptables file
     copy:
