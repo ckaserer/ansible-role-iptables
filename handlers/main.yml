@@ -1,5 +1,2 @@
 ---
 # handlers file for iptables
-- name: restart_pi
-  reboot:
-  when: not test_environment
