@@ -24,7 +24,7 @@
       chain: INPUT
       in_interface: "{{ item }}"
       jump: ACCEPT
-    state: present
+      state: present
     with_items:
       - eth0
 
