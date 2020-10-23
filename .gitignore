@@ -4,3 +4,4 @@ work/
 .vagrant/
 .ckaserer
 .vagrant/
+.k3s/*
