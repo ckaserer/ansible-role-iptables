@@ -5,6 +5,7 @@
   hosts: all
   vars:
     iptables_persistent_location: '/etc/iptables/rules.v4'
+    sysctl_conf_location: '/etc/sysctl.conf'
 
   tasks:
   - name: check ipv4 forwarding is enabled permanently
