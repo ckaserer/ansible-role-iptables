@@ -2,7 +2,7 @@ galaxy_info:
   author: Felix Hochleitner
   description: iptables role tailored to learning friday project k3s
   company: Gepardec IT Services GmbH
-  role_name: k3s-iptables
+  role_name: k3s_iptables
   license: license (GPL-3.0-only)
   min_ansible_version: 2.1
   galaxy_tags:

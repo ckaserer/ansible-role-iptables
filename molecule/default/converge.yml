@@ -6,4 +6,4 @@
   tasks:
     - name: "Include iptables"
       include_role:
-        name: "k3s-iptables"
+        name: "ansible-role-k3s-iptables"
