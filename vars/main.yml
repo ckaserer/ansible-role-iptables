@@ -1,2 +1,5 @@
 ---
 # vars file for iptables
+install_packages:
+  - iptables
+  - iptables-persistent
