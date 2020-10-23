@@ -5,4 +5,4 @@
   tasks:
     - name: "Include iptables"
       include_role:
-        name: "iptables"
+        name: "k3s-iptables"

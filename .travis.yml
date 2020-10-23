@@ -18,6 +18,5 @@ install:
 env:
   jobs:
   - SCENARIO=default
-  - SCENARIO=systemwide
 script:
 - molecule test --scenario-name ${SCENARIO}
