@@ -3,7 +3,29 @@
 
 - name: Verify
   hosts: all
+  vars:
+    iptables_persistent_location: '/etc/iptables/rules.v4'
+    sysctl_conf_location: '/etc/sysctl.conf'
+
   tasks:
-  - name: Example assertion
-    assert:
-      that: true
+  - name: check ipv4 forwarding is enabled permanently
+    lineinfile:
+      path: "{{ sysctl_conf_location }}"
+      regexp: '#net.ipv4.ip_forward=1'
+      line: 'net.ipv4.ip_forward=1'
+    register: perm_result
+    failed_when: perm_result.changed
+
+  - name: Save iptables file location to variable
+    stat:
+      path: "{{ iptables_persistent_location }}"
+    register: stat_result
+    failed_when: not stat_result.stat.exists
+
+  - name: check content of iptables file
+    copy:
+      src: './molecule/files/rules.v4.compare'
+      dest: "{{ iptables_persistent_location }}"
+    check_mode: yes
+    register: content_result
+    failed_when: content_result.changed

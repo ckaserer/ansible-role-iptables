@@ -58,3 +58,9 @@
       out_interface: eth0
       in_interface: wlan0
       state: present
+
+  - name: 'save iptables to file'
+    community.general.iptables_state:
+      state: saved
+      ip_version: ipv4
+      path: "{{ iptables_persistent_location }}"
