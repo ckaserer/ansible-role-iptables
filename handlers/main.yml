@@ -1,0 +1,8 @@
+---
+
+- name: reboot system
+  reboot:
+  tags:
+    - notest
+
+...
