@@ -1,8 +1,5 @@
 ---
-
 - name: reboot system
   reboot:
-  tags:
-    - notest
-
+  when: molecule_yml is not defined
 ...

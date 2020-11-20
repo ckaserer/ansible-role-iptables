@@ -4,6 +4,7 @@ dist: buster
 language: python
 python:
 - '3.6'
+cache: pip
 services:
 - docker
 notifications:
@@ -14,16 +15,22 @@ notifications:
     if: branch = master
     secure: RX3slHNsjUKZW1my12oqfd1E9SnvFXjCAgNpySHzqSI9ivTEMfz+BxA8RPLt6nCmITsPw8dWFE/oHSL9j5DBt2IfZ+BZSgiaQwZEopAz1deocoK3Ir28W3VoEIBMeudMq2aFFFck4+BZZSv0jmEf/cNhjnLdySfCWCbSyM5WjQH0b/3BtCWwg9tyXb5RH+NRibbdeAGk+QQz/a3Ppdmqzlwcjv5jMkaAVtx8/hEXwLEAVIrAX1HvjZy3bj62j5wO000tqHh57D3a/XkRjdfgxduRF/j4e1vgIgpjb0SYbY4iKGSGLXkH7p1KKowEuFZvjOYu9ekEC7nI/rjwH4dvjZz/7Fs1cpEo6Y0JmjdbUkUP33Rbrt/X5BRIiS/dXnCRbSrqTpi0CGbDPYJPhtsskDEi8sfYmED/CmY0SKUTN8cFKG2H7Syv5/FYeC8edohoXbSYFQyTuVgm4TZci75RstFFeWGoH/T2eQK4dy/TX5FciHacvkmTr5Aiu6N8QSxfaffB/o4a0vq45byAUFIoq17AAbyqCpJZyj3R+OL5TT5j3hyUX9YepkgUd144eYSKekiuKF0Na/8gZCekGUL9fRXPXmoZ8ohG26EU7ifxbZqRlP394jBz97Xv2EWv+pFCiuUMHkpKYKtHULvaz7kHJFRen9KbkD3Tv37qzICXbX8=
     template:
-      - "%{commit_subject}"
-      - build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) @%{branch}
-      - by %{author} %{result} in %{duration}
+    - "%{commit_subject}"
+    - build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) @%{branch}
+    - by %{author} %{result} in %{duration}
     on_success: change
     on_failure: always
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
 install:
 - pip install -r requirements.txt
+- curl -Lo merge.sh https://raw.githubusercontent.com/ckaserer/git-merge-script/master/merge.sh
+- chmod +x merge.sh
 env:
   jobs:
   - SCENARIO=default
+  global:
+    secure: ZWz/TMxBRMyoACAg2OmE/nzuT7r+YF8vG3+AUX3chrcHIBjvSRcnPH5wdkoCiAUTtj06L/bNLICTG+8KrDm0jUcB3oG3TaPWbWBirVZaQCuFuBAjeG52XjyyECdXlISoAvxYYGAWGrNsLMgBRhx8HnzoUqk5HhNobXmZLte25yOLD4Pr1ACqQDMamGSffporlugIeRykLPOMdImSh+9W2IsscQwmK+c0VXLNStnUSDQ4Yz5DFKR1yG2/AKVIDqwoSaIuTaEzHvJWDlX6bwXNFUFCa/1D9TeXlyzBcua4UN/w4185VP7rN5ofa4K/A6vunzJrevOBdjtaT+qKkreMEF6mWbLp++DLJLroym/DRGf+HmLUT/DUIwglF8WA1/+n0+LX747jVpzf1I5SwvBrO8REcvXWKzfuOKjDS1ywac40DdAfQxlqqw4hBy9SliaKVqUymklnLqRqtqEWnLLoykSo+rFPvQ4Kqmpb7jeGQWnVsRxvn6Fq+ly5g/83CaH3m1sk+Mnpfg/2gIXyBRxqoQEaYM33FoPL9rv7OwMXXgKMWZpZpY8KEaFFfhBg//8zqXdbEJ4gqmMeNLrn5/h2Jw9bKh0ikok9N59HNkQJpCiKCY9wGQBlkrFGKPwCDvSt86O8OdFa/vGRzecL9RLX8jECkYJ3YBKFyAB3yqrfniw=
 script:
 - molecule test --scenario-name ${SCENARIO}
+after_success:
+- BRANCHES_TO_MERGE_REGEX='^develop' BRANCH_TO_MERGE_INTO=master ./merge.sh

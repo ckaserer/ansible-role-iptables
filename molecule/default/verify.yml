@@ -1,6 +1,4 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
 - name: Verify
   hosts: all
   vars:
@@ -29,3 +27,4 @@
     check_mode: yes
     register: content_result
     failed_when: content_result.changed
+...

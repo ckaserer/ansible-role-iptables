@@ -1,67 +1,68 @@
 ---
+- name: install iptables
+  package:
+    name: "{{ install_packages }}"
+    state: present
 
-  - name: install iptables
-    package:
-      name: "{{ install_packages }}"
-      state: present
+- name: enable ipv4 forwarding permanently
+  lineinfile:
+    path: "{{ sysctl_conf_location }}"
+    regexp: '#net.ipv4.ip_forward=1'
+    line: 'net.ipv4.ip_forward=1'
+    state: present
+    create: true
+    mode: "0644"
+  tags: iptables
 
-  - name: enable ipv4 forwarding permanently
-    lineinfile:
-      path: "{{ sysctl_conf_location }}"
-      regexp: '#net.ipv4.ip_forward=1'
-      line: 'net.ipv4.ip_forward=1'
-      state: present
-      create: true
-    tags: iptables
+- name: accept loopback interface input
+  iptables:
+    chain: INPUT
+    in_interface: "{{ item }}"
+    jump: ACCEPT
+    state: present
+  with_items:
+    - eth0
 
-  - name: accept loopback interface input
-    iptables:
-      chain: INPUT
-      in_interface: "{{ item }}"
-      jump: ACCEPT
-      state: present
-    with_items:
-      - eth0
+- name: input accept chain
+  iptables:
+    chain: INPUT
+    jump: ACCEPT
+    ctstate: ESTABLISHED,RELATED
+    match:
+      - state
+    state: present
 
-  - name: input accept chain
-    iptables:
-      chain: INPUT
-      jump: ACCEPT
-      ctstate: ESTABLISHED,RELATED
-      match:
-        - state
-      state: present
+- name: wlan0 postrouting nat
+  iptables:
+    jump: MASQUERADE
+    out_interface: wlan0
+    chain: POSTROUTING
+    table: nat
+    state: present
 
-  - name: wlan0 postrouting nat
-    iptables:
-      jump: MASQUERADE
-      out_interface: wlan0
-      chain: POSTROUTING
-      table: nat
-      state: present
+- name: eth0 to wlan0 forward rule
+  iptables:
+    jump: ACCEPT
+    ctstate: ESTABLISHED,RELATED
+    match:
+      - state
+    chain: FORWARD
+    out_interface: eth0
+    in_interface: wlan0
+    state: present
 
-  - name: eth0 to wlan0 forward rule
-    iptables:
-      jump: ACCEPT
-      ctstate: ESTABLISHED,RELATED
-      match:
-        - state
-      chain: FORWARD
-      out_interface: eth0
-      in_interface: wlan0
-      state: present
+- name: wlan0 to eth0 accept rule
+  iptables:
+    jump: ACCEPT
+    chain: FORWARD
+    out_interface: eth0
+    in_interface: wlan0
+    state: present
 
-  - name: wlan0 to eth0 accept rule
-    iptables:
-      jump: ACCEPT
-      chain: FORWARD
-      out_interface: eth0
-      in_interface: wlan0
-      state: present
-
-  - name: 'save iptables to file'
-    community.general.iptables_state:
-      state: saved
-      ip_version: ipv4
-      path: "{{ iptables_persistent_location }}"
-    notify: reboot system
+- name: 'save iptables to file'
+  community.general.iptables_state:
+    state: saved
+    ip_version: ipv4
+    path: "{{ iptables_persistent_location }}"
+  notify: reboot system
+...

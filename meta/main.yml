@@ -3,7 +3,7 @@ galaxy_info:
   description: iptables role tailored to learning friday project k3s
   company: Gepardec IT Services GmbH
   role_name: k3s_iptables
-  license: license (GPL-3.0-only)
+  license: GPLv3
   min_ansible_version: 2.10.0
   galaxy_tags:
     - iptables
