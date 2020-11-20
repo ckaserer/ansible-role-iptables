@@ -6,5 +6,4 @@ install_packages:
 sysctl_conf_location: '/etc/sysctl.conf'
 ip_forward_tmp_location: '/proc/sys/net/ipv4/ip_forward'
 iptables_persistent_location: '/etc/iptables/rules.v4'
-sysctl_conf_location: '/etc/sysctl.conf'
 ...
